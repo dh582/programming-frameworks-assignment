@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TestVar Flashcards</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .flashcard {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .flashcard button {
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Flashcard Collections</h1>
+    <div id="flashcard-list"></div>
+
+    <h2>Add a New Flashcard</h2>
+    <input type="text" id="question" placeholder="Question" required>
+    <input type="text" id="answer" placeholder="Answer" required>
+    <button id="add-flashcard">Add Flashcard</button>
+
+    <script>
+        const flashcardList = document.getElementById('flashcard-list');
+        const addFlashcardButton = document.getElementById('add-flashcard');
+
+        // Function to fetch flashcards from the API
+        function fetchFlashcards() {
+            fetch('/api/flashcards')
+                .then(response => response.json())
+                .then(data => {
+                    flashcardList.innerHTML = '';
+                    data.forEach(flashcard => {
+                        const flashcardDiv = document.createElement('div');
+                        flashcardDiv.classList.add('flashcard');
+                        flashcardDiv.innerHTML = `
+                            <strong>Question:</strong> ${flashcard.question}<br>
+                            <strong>Answer:</strong> <span class="answer" style="display:none;">${flashcard.answer}</span>
+                            <button onclick="toggleAnswer(this)">Show Answer</button>
+                        `;
+                        flashcardList.appendChild(flashcardDiv);
+                    });
+                })
+                .catch(error => console.error('Error fetching flashcards:', error));
+        }
+
+        // Function to toggle the answer visibility
+        function toggleAnswer(button) {
+            const answerSpan = button.previousElementSibling;
+            if (answerSpan.style.display === 'none') {
+                answerSpan.style.display = 'inline';
+                button.innerText = 'Hide Answer';
+            } else {
+                answerSpan.style.display = 'none';
+                button.innerText = 'Show Answer';
+            }
+        }
+
+        // Event listener for adding a new flashcard
+        addFlashcardButton.addEventListener('click', () => {
+            const question = document.getElementById('question').value;
+            const answer = document.getElementById('answer').value;
+
+            fetch('/api/flashcards', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ question, answer })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Flashcard added:', data);
+                fetchFlashcards(); // Refresh the flashcard list
+                document.getElementById('question').value = '';
+                document.getElementById('answer').value = '';
+            })
+            .catch(error => console.error('Error adding flashcard:', error));
+        });
+
+        // Initial fetch of flashcards when the page loads
+        fetchFlashcards();
+    </script>
+</body>
+</html>
