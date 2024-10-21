@@ -26,6 +26,9 @@
     <h2>Add a New Flashcard</h2>
     <input type="text" id="question" placeholder="Question" required>
     <input type="text" id="answer" placeholder="Answer" required>
+    <label>
+        <input type="checkbox" id="hidden"> Mark as hidden
+    </label>
     <button id="add-flashcard">Add Flashcard</button>
 
     <script>
@@ -68,13 +71,14 @@
         addFlashcardButton.addEventListener('click', () => {
             const question = document.getElementById('question').value;
             const answer = document.getElementById('answer').value;
+            const hidden = document.getElementById('hidden').checked; // Check if hidden is selected
 
             fetch('/api/flashcards', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ question, answer })
+                body: JSON.stringify({ question, answer, hidden }) // Include hidden status
             })
             .then(response => response.json())
             .then(data => {
@@ -82,6 +86,7 @@
                 fetchFlashcards(); // Refresh the flashcard list
                 document.getElementById('question').value = '';
                 document.getElementById('answer').value = '';
+                document.getElementById('hidden').checked = false; // Reset checkbox
             })
             .catch(error => console.error('Error adding flashcard:', error));
         });
