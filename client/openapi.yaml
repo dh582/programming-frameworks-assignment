@@ -1,0 +1,58 @@
+
+paths:
+  /api/flashcards:
+    get:
+      summary: Get all flashcards (excluding hidden ones)
+      responses:
+        '200':
+          description: List of flashcards
+        '500':
+          description: Server error
+
+  /api/flashcards/{id}/hide:
+    post:
+      summary: Hide a flashcard by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Flashcard hidden successfully
+        '500':
+          description: Server error
+
+  /api/flashcards/rate:
+    post:
+      summary: Rate a flashcard set
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                setId:
+                  type: integer
+                rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+      responses:
+        '201':
+          description: Rating added
+        '400':
+          description: Invalid rating
+        '500':
+          description: Server error
+
+  /api/flashcards/top-rated:
+    get:
+      summary: Get top-rated flashcard sets
+      responses:
+        '200':
+          description: List of top-rated flashcard sets
+        '500':
+          description: Server error
