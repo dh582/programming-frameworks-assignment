@@ -14,5 +14,9 @@
     "cors": "^2.8.5",
     "express": "^4.21.1",
     "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "superest": "^0.6.0"
   }
 }

@@ -1,3 +1,8 @@
+openapi: 3.0.0
+info:
+  title: Flashcards API
+  version: 1.0.0
+  description: API for managing and rating flashcards
 
 paths:
   /api/flashcards:
@@ -6,6 +11,24 @@ paths:
       responses:
         '200':
           description: List of flashcards
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    question:
+                      type: string
+                    answer:
+                      type: string
+                    created_at:
+                      type: string
+                      format: date-time
+                    hidden:
+                      type: boolean
         '500':
           description: Server error
 
@@ -21,6 +44,13 @@ paths:
       responses:
         '200':
           description: Flashcard hidden successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
         '500':
           description: Server error
 
@@ -36,13 +66,22 @@ paths:
               properties:
                 setId:
                   type: integer
+                  description: ID of the flashcard set to rate
                 rating:
                   type: integer
+                  description: Rating value between 1 and 5
                   minimum: 1
                   maximum: 5
       responses:
         '201':
           description: Rating added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
         '400':
           description: Invalid rating
         '500':
@@ -54,5 +93,17 @@ paths:
       responses:
         '200':
           description: List of top-rated flashcard sets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    set_id:
+                      type: integer
+                    avg_rating:
+                      type: number
+                      format: float
         '500':
           description: Server error
