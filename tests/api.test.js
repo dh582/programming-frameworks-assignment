@@ -1,6 +1,23 @@
-// tests/api.test.js
 const request = require('supertest');
-const app = require('../server'); // Adjust the path to your Express app
+const { app, db } = require('../server');
+
+beforeAll((done) => {
+    db.serialize(() => {
+        // Set up the necessary test data in your database if needed
+        done();
+    });
+});
+
+afterAll((done) => {
+    db.close((err) => {
+        if (err) {
+            console.error('Error closing database:', err);
+        } else {
+            console.log('Database connection closed.');
+        }
+        done();
+    });
+});
 
 describe('API Tests', () => {
     it('GET /api/flashcards should return flashcards', async () => {

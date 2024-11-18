@@ -149,7 +149,12 @@ app.patch('/api/admin/daily-limit', (req, res) => {
     res.json({ message: `Daily limit updated to ${newLimit}.` });
 });
 
-// Start the server
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+// Start the server only if this file is being run directly
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server is running on http://localhost:${PORT}`);
+    });
+}
+
+// Export app and db for testing
+module.exports = { app, db };
