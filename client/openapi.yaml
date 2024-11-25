@@ -2,7 +2,42 @@ openapi: 3.0.0
 info:
   title: Flashcards API
   version: 1.0.0
-  description: API for managing and rating flashcards
+  description: |
+    API for managing and rating flashcards.
+
+    ## How to Test This Project
+
+    ### Prerequisites
+    - Ensure that Node.js and npm are installed on your machine.
+    - Clone the project repository from GitHub.
+
+    ### Setup
+    1. Navigate to the project directory:
+       ```bash
+       cd path/to/project
+       ```
+    2. Install the required dependencies:
+       ```bash
+       npm install
+       ```
+
+    ### Running the Tests
+    - To run the API tests, make sure the server is set up properly:
+      ```bash
+      npm test
+      ```
+    - This command will execute all tests located in the `tests/` directory using Jest and Supertest.
+
+    ### Testing Endpoints Individually
+    - Use a tool like Postman or cURL to interact with the API endpoints manually if desired.
+    - For example, to test the `/api/flashcards` endpoint:
+      ```bash
+      curl -X GET http://localhost:3000/api/flashcards
+      ```
+
+    ### Troubleshooting
+    - If tests are not running, verify that all dependencies are installed and that the server configuration matches the project requirements.
+    - Ensure the database (SQLite) is set up and accessible by the API during tests.
 
 paths:
   /api/flashcards:
@@ -16,19 +51,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    question:
-                      type: string
-                    answer:
-                      type: string
-                    created_at:
-                      type: string
-                      format: date-time
-                    hidden:
-                      type: boolean
+                  $ref: '#/components/schemas/Flashcard'
         '500':
           description: Server error
 
@@ -107,3 +130,20 @@ paths:
                       format: float
         '500':
           description: Server error
+
+components:
+  schemas:
+    Flashcard:
+      type: object
+      properties:
+        id:
+          type: integer
+        question:
+          type: string
+        answer:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        hidden:
+          type: boolean

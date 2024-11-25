@@ -1,3 +1,4 @@
+//I am using Express for this assignment as i have done some projects with express before
 const express = require('express');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
@@ -25,6 +26,7 @@ const db = new sqlite3.Database('./server/database.db', (err) => {
     console.log('Connected to the SQLite database.');
 });
 
+// Middleware to handle flashcard daily creation limit
 let dailyLimit = 20; // Default daily limit
 
 // API endpoint to get all flashcards, filtering out hidden cards for the user
@@ -56,7 +58,8 @@ app.post('/api/flashcards', (req, res) => {
         }
 
         // Insert the flashcard with the 'hidden' status
-        db.run(`INSERT INTO flashcards (question, answer, hidden) VALUES (?, ?, ?)`, [question, answer, hidden], function(err) {
+        db.run(`INSERT INTO flashcards (question, answer, hidden, created_at) VALUES (?, ?, ?, ?)`, 
+               [question, answer, hidden, today], function(err) {
             if (err) {
                 console.error('Error inserting flashcard:', err.message);
                 return res.status(500).json({ error: err.message });
@@ -82,9 +85,12 @@ app.post('/api/flashcards/:id/hide', (req, res) => {
 
 // API endpoint to rate a flashcard set
 app.post('/api/flashcards/rate', (req, res) => {
-    const { set_id, rating } = req.body;  // Use set_id
+    const { set_id, rating } = req.body;
 
-    // Validate rating input
+    // Validate rating input and set_id presence
+    if (!set_id || typeof set_id !== 'number') {
+        return res.status(400).json({ error: 'Invalid set ID.' });
+    }
     if (rating < 1 || rating > 5) {
         return res.status(400).json({ error: 'Rating must be between 1 and 5.' });
     }
@@ -92,7 +98,6 @@ app.post('/api/flashcards/rate', (req, res) => {
     db.run(`INSERT INTO ratings (set_id, rating) VALUES (?, ?)`, [set_id, rating], function(err) {
         if (err) {
             console.error('Error rating flashcard set:', err.message);
-            console.error('SQL query failed with parameters:', [set_id, rating]);
             return res.status(500).json({ error: err.message });
         }
         res.status(201).json({ message: `Rated flashcard set with ID ${set_id} successfully.` });
